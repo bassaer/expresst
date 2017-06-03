@@ -1,25 +1,18 @@
 var express = require('express');
 var ejs = require('ejs');
-var bodyParser = require('body-parser');
 var app = express();
+var cookieParser = require('cookie-parser');
 
 app.engine('ejs', ejs.renderFile);
-app.use(bodyParser.urlencoded ({
-    extended: true
-}));
+app.use(cookieParser());
 
 app.get('/', function(req, res) {
-    console.log('---GET Request---');
-    console.log('name' + req.query.name);
-    console.log('ageは' + req.query.age);
-    res.render('temp.ejs', {});
-});
-
-app.post('/', function(req, res) {
-    console.log('---POST Request---');
-    console.log('nameは' + req.body.name);
-    console.log('ageは' + req.body.age);
-    res.render('temp.ejs', {});
+    var count = req.cookies.count == undefined ? 0 : req.cookies.count;
+    count++;
+    res.cookie('count', count, {maxAge: 5000});
+    res.render('temp.ejs', {
+        count: count
+    });
 });
 
 var server = app.listen(1234, function() {

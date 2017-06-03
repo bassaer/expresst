@@ -1,15 +1,19 @@
 var express = require('express');
 var ejs = require('ejs');
 var app = express();
-var cookieParser = require('cookie-parser');
+var session = require('express-session');
 
 app.engine('ejs', ejs.renderFile);
-app.use(cookieParser());
+app.use(session( {
+    secret: 'hoge',
+    resave: true,
+    saveUninitialized: true,
+}));
 
 app.get('/', function(req, res) {
-    var count = req.cookies.count == undefined ? 0 : req.cookies.count;
+    var count = req.session.count == undefined ? 0 : req.session.count;
     count++;
-    res.cookie('count', count, {maxAge: 5000});
+    req.session.count = count;
     res.render('temp.ejs', {
         count: count
     });
